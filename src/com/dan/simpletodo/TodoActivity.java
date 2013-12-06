@@ -8,9 +8,11 @@ import org.apache.commons.io.FileUtils;
 
 import android.os.Bundle;
 import android.app.Activity;
+import android.content.Intent;
 import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -20,6 +22,8 @@ public class TodoActivity extends Activity {
 	ArrayList<String> items;
 	ArrayAdapter<String> itemsAdapter;
 	ListView lvItems;
+	private final int EDIT_REQUEST = 1;
+	int editingItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,8 +45,13 @@ public class TodoActivity extends Activity {
     }
     
     public void addTodoItem(View v){
+    	
     	EditText etNewItem = (EditText)findViewById(R.id.etNewItem);
-    	itemsAdapter.add(etNewItem.getText().toString());
+    	String item = etNewItem.getText().toString();
+    	if(item.length()==0){
+    		return;
+    	}
+    	itemsAdapter.add(item);
     	etNewItem.setText("");
     	saveItems();
     }
@@ -57,7 +66,34 @@ public class TodoActivity extends Activity {
     			return true;
     		}
     	});
+    	
+    	lvItems.setOnItemClickListener(new OnItemClickListener(){
+			@Override
+			public void onItemClick(AdapterView<?> aView, View item, int pos,
+					long id) {
+				// TODO Auto-generated method stub
+				Intent i = new Intent(TodoActivity.this, EditItemActivity.class);
+				i.putExtra("item", items.get(pos));
+				editingItem = pos;
+				startActivityForResult(i,EDIT_REQUEST);
+			}
+    	});
     }
+    
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+      // REQUEST_CODE is defined above
+      if (resultCode == RESULT_OK && requestCode == EDIT_REQUEST) {
+         // Extract name value from result extras
+         String updated = data.getExtras().getString("updated");
+         if(updated.length()==0){
+        	 return;
+         }
+         items.set(editingItem, updated);
+         itemsAdapter.notifyDataSetInvalidated();
+         saveItems();
+      }
+    } 
     
     private void readItems(){
     	File filesDir = getFilesDir();
