@@ -20,6 +20,7 @@ public class EditItemActivity extends Activity {
 		etItem = (EditText) findViewById(R.id.etItem);
 		btnUpdate = (Button) findViewById(R.id.btnUpdate);
 		String itemText = getIntent().getStringExtra("item");
+		//initialize the update text
 		etItem.setText(itemText);
 		etItem.setSelection(itemText.length());
 	}
@@ -32,6 +33,7 @@ public class EditItemActivity extends Activity {
 	}
 	
 	public void onUpdate(View v){
+		//when updated, pass the new description back to previous activity
 		Intent data = new Intent();
 		data.putExtra("updated",etItem.getText().toString());
 		setResult(RESULT_OK,data);

@@ -48,6 +48,7 @@ public class TodoActivity extends Activity {
     	
     	EditText etNewItem = (EditText)findViewById(R.id.etNewItem);
     	String item = etNewItem.getText().toString();
+    	//ignore items without any description
     	if(item.length()==0){
     		return;
     	}
@@ -86,6 +87,7 @@ public class TodoActivity extends Activity {
       if (resultCode == RESULT_OK && requestCode == EDIT_REQUEST) {
          // Extract name value from result extras
          String updated = data.getExtras().getString("updated");
+         //if updated to blank, ignore the update. alternatively could delete the item.
          if(updated.length()==0){
         	 return;
          }
